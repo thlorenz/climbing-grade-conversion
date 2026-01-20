@@ -18,6 +18,10 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --font-size: 14px;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -59,7 +63,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: var(--font-size, 14px);
         }
 
         th {
@@ -550,13 +554,14 @@
         }
 
         function setFontSize(size) {
-            document.documentElement.style.fontSize = size + 'px';
+            document.documentElement.style.setProperty('--font-size', size + 'px');
             document.getElementById('fontSizeValue').textContent = size + 'px';
             updateButtonStates();
         }
 
         function updateButtonStates() {
-            const currentSize = parseInt(document.documentElement.style.fontSize) || 14;
+            const fontSize = getComputedStyle(document.documentElement).getPropertyValue('--font-size').trim();
+            const currentSize = parseInt(fontSize) || 14;
             const decreaseBtn = document.getElementById('decreaseFontBtn');
             const increaseBtn = document.getElementById('increaseFontBtn');
             

@@ -726,10 +726,13 @@
                  e.preventDefault();
                  e.stopPropagation();
                  console.log('Hamburger clicked, opening menu');
-                 console.log('Before add:', mobileMenu.className);
                  mobileMenu.classList.add('open');
-                 console.log('After add:', mobileMenu.className);
-                 console.log('Menu visible?', window.getComputedStyle(mobileMenu).display);
+                 const content = document.getElementById('mobileMenuContent');
+                 console.log('Menu display:', window.getComputedStyle(mobileMenu).display);
+                 console.log('Content transform:', window.getComputedStyle(content).transform);
+                 setTimeout(() => {
+                     console.log('After transition - Content transform:', window.getComputedStyle(content).transform);
+                 }, 350);
              });
 
              // Close menu button

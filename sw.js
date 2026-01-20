@@ -1,4 +1,4 @@
-const CACHE_NAME = 'climbing-v4';
+const CACHE_NAME = 'climbing-v7';
 const urlsToCache = [
   './',
   './index.html',

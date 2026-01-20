@@ -329,9 +329,10 @@
             background-color: white;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
             overflow-y: auto;
-            z-index: 100;
+            z-index: 1001;
             transition: left 0.3s ease;
             padding: 20px;
+            pointer-events: auto;
         }
 
         .mobile-menu.open .mobile-menu-content {
@@ -370,50 +371,16 @@
                 justify-content: center;
             }
 
-            .controls {
+            #desktopControls {
                 display: none;
-            }
-
-            .mobile-menu-content {
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: auto;
-                max-width: 100%;
-                height: auto;
-                background-color: #f5f5f5;
-                box-shadow: none;
-                transform: scaleY(0);
-                transform-origin: top right;
-                border-bottom: 1px solid #e0e0e0;
-                padding: 15px;
-            }
-
-            .mobile-menu.open .mobile-menu-content {
-                transform: scaleY(1);
-            }
-
-            .mobile-menu {
-                position: static;
-                background-color: transparent;
-                opacity: 1;
-                pointer-events: auto;
             }
 
             .mobile-menu-close {
                 display: none;
             }
 
-            .dark-mode .mobile-menu-content {
-                background-color: #2a2a2a;
-            }
-
             header h1 {
                 font-size: 24px;
-            }
-
-            table {
-                font-size: 12px;
             }
 
             th, td {
@@ -445,10 +412,6 @@
 
             th, td {
                 padding: 6px;
-            }
-
-            table {
-                font-size: 11px;
             }
         }
     </style>
@@ -806,8 +769,10 @@
 
         function setFontSize(size) {
             document.documentElement.style.setProperty('--font-size', size + 'px');
-            document.getElementById('fontSizeValue').textContent = size + 'px';
-            document.getElementById('fontSizeValueMobile').textContent = size + 'px';
+            const fontSizeValue = document.getElementById('fontSizeValue');
+            const fontSizeValueMobile = document.getElementById('fontSizeValueMobile');
+            if (fontSizeValue) fontSizeValue.textContent = size + 'px';
+            if (fontSizeValueMobile) fontSizeValueMobile.textContent = size + 'px';
             updateButtonStates();
         }
 

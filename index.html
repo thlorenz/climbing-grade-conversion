@@ -283,7 +283,7 @@
             -webkit-user-select: none;
             touch-action: manipulation;
             position: absolute;
-            top: 20px;
+            top: 40px;
             left: 20px;
             z-index: 101;
         }
@@ -714,41 +714,44 @@
          function setupHamburgerMenu() {
              const hamburgerBtn = document.getElementById('hamburgerBtn');
              const mobileMenu = document.getElementById('mobileMenu');
-             const mobileMenuContent = document.getElementById('mobileMenuContent');
              const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+             if (!hamburgerBtn || !mobileMenu || !mobileMenuClose) {
+                 console.error('Hamburger menu elements not found', { hamburgerBtn, mobileMenu, mobileMenuClose });
+                 return;
+             }
 
              // Open menu
              hamburgerBtn.addEventListener('click', (e) => {
+                 e.preventDefault();
                  e.stopPropagation();
+                 console.log('Hamburger clicked, opening menu');
                  mobileMenu.classList.add('open');
              });
 
              // Close menu button
              mobileMenuClose.addEventListener('click', (e) => {
+                 e.preventDefault();
                  e.stopPropagation();
+                 console.log('Close button clicked, closing menu');
                  mobileMenu.classList.remove('open');
              });
 
              // Close menu when clicking outside
              mobileMenu.addEventListener('click', (e) => {
                  if (e.target === mobileMenu) {
+                     console.log('Clicked outside menu, closing');
                      mobileMenu.classList.remove('open');
                  }
              });
 
-             // Close menu when clicking menu items (for mobile UX)
-             document.querySelectorAll('#mobileControlsGroup input[type="checkbox"]').forEach(checkbox => {
-                 checkbox.addEventListener('change', () => {
-                     // Don't auto-close, let user interact with multiple items
-                 });
-             });
-
-             // Close menu when clicking outside on desktop (for small screens)
+             // Close menu when clicking outside
              document.addEventListener('click', (e) => {
                  if (window.innerWidth <= 768 && 
                      !mobileMenu.contains(e.target) && 
                      !hamburgerBtn.contains(e.target) &&
                      mobileMenu.classList.contains('open')) {
+                     console.log('Clicked outside, closing menu');
                      mobileMenu.classList.remove('open');
                  }
              });

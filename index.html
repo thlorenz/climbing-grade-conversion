@@ -269,7 +269,146 @@
             color: #fff;
         }
 
+        .hamburger-btn {
+            display: none;
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 10px 15px;
+            min-width: 44px;
+            min-height: 44px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .hamburger-btn:active {
+            opacity: 0.7;
+        }
+
+        .header-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-content {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            z-index: 100;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            padding: 20px;
+        }
+
+        .mobile-menu.open .mobile-menu-content {
+            transform: translateX(0);
+        }
+
+        .dark-mode .mobile-menu-content {
+            background-color: #2a2a2a;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-menu-close {
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            float: right;
+            color: #333;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .dark-mode .mobile-menu-close {
+            color: #fff;
+        }
+
         @media (max-width: 768px) {
+            header {
+                position: relative;
+            }
+
+            .hamburger-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .mobile-menu-content {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: auto;
+                max-width: 100%;
+                height: auto;
+                background-color: #f5f5f5;
+                box-shadow: none;
+                transform: scaleY(0);
+                transform-origin: top right;
+                border-bottom: 1px solid #e0e0e0;
+                padding: 15px;
+            }
+
+            .mobile-menu.open .mobile-menu-content {
+                transform: scaleY(1);
+            }
+
+            .mobile-menu {
+                position: static;
+                background-color: transparent;
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .mobile-menu-close {
+                display: none;
+            }
+
+            .dark-mode .mobile-menu-content {
+                background-color: #2a2a2a;
+            }
+
             header h1 {
                 font-size: 24px;
             }
@@ -320,7 +459,28 @@
         <header>
             <h1>🧗 Climbing Grade Conversion Chart</h1>
             <p>Rockfax Single Grade Conversion 2021</p>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">☰</button>
         </header>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-content" id="mobileMenuContent">
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
+                <div class="controls" id="mobileControls">
+                    <h3>Show/Hide Grading Systems</h3>
+                    <div class="checkbox-group" id="mobileControlsGroup">
+                    </div>
+
+                    <div class="font-size-control">
+                        <label>Font Size:</label>
+                        <div class="font-size-buttons">
+                            <button class="font-size-btn" id="decreaseFontBtnMobile" aria-label="Decrease font size">−</button>
+                            <span class="font-size-value" id="fontSizeValueMobile">14px</span>
+                            <button class="font-size-btn" id="increaseFontBtnMobile" aria-label="Increase font size">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="table-wrapper">
             <table id="gradesTable">
@@ -340,7 +500,7 @@
             </table>
         </div>
 
-        <div class="controls">
+        <div class="controls" id="desktopControls">
             <h3>Show/Hide Grading Systems</h3>
             <div class="checkbox-group" id="controlsGroup">
             </div>
@@ -408,100 +568,192 @@
         ];
 
         // Initialize
-        function init() {
-            renderTable();
-            renderControls();
-            attachEventListeners();
-        }
+         function init() {
+             renderTable();
+             renderControls();
+             attachEventListeners();
+             setupHamburgerMenu();
+         }
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+         function renderTable() {
+             const tbody = document.getElementById('tableBody');
+             tbody.innerHTML = '';
 
-            gradesData.forEach(grade => {
-                const row = document.createElement('tr');
-                const categoryLower = grade.category.toLowerCase();
-                row.className = `grade-${categoryLower}`;
+             gradesData.forEach(grade => {
+                 const row = document.createElement('tr');
+                 const categoryLower = grade.category.toLowerCase();
+                 row.className = `grade-${categoryLower}`;
 
-                columns.forEach(col => {
-                    if (col.visible) {
-                        const td = document.createElement('td');
-                        if (col.id === 'category') {
-                            td.innerHTML = `<span class="category-badge badge-${categoryLower}">${grade.category}</span>`;
-                        } else {
-                            td.textContent = grade[col.id];
-                        }
-                        row.appendChild(td);
-                    }
-                });
+                 columns.forEach(col => {
+                     if (col.visible) {
+                         const td = document.createElement('td');
+                         if (col.id === 'category') {
+                             td.innerHTML = `<span class="category-badge badge-${categoryLower}">${grade.category}</span>`;
+                         } else {
+                             td.textContent = grade[col.id];
+                         }
+                         row.appendChild(td);
+                     }
+                 });
 
-                tbody.appendChild(row);
-            });
+                 tbody.appendChild(row);
+             });
 
-            updateTableHeaders();
-        }
+             updateTableHeaders();
+         }
 
-        function updateTableHeaders() {
-            const headers = document.querySelectorAll('th');
-            headers.forEach(th => {
-                const colId = th.dataset.column;
-                const col = columns.find(c => c.id === colId);
-                
-                if (colId === 'sport') {
-                    th.style.display = '';
-                } else if (col) {
-                    th.style.display = col.visible ? '' : 'none';
-                }
-            });
-        }
+         function updateTableHeaders() {
+             const headers = document.querySelectorAll('th');
+             headers.forEach(th => {
+                 const colId = th.dataset.column;
+                 const col = columns.find(c => c.id === colId);
+                 
+                 if (colId === 'sport') {
+                     th.style.display = '';
+                 } else if (col) {
+                     th.style.display = col.visible ? '' : 'none';
+                 }
+             });
+         }
 
-        function renderControls() {
-            const controlsGroup = document.getElementById('controlsGroup');
-            controlsGroup.innerHTML = '';
+         function renderControls() {
+             // Render desktop controls
+             const controlsGroup = document.getElementById('controlsGroup');
+             controlsGroup.innerHTML = '';
 
-            columns.forEach(col => {
-                if (col.id !== 'sport') { // Skip sport grade - always visible
-                    const div = document.createElement('div');
-                    div.className = 'checkbox-item';
-                    
-                    const input = document.createElement('input');
-                    input.type = 'checkbox';
-                    input.id = `col-${col.id}`;
-                    input.checked = col.visible;
-                    input.dataset.column = col.id;
+             // Render mobile controls
+             const mobileControlsGroup = document.getElementById('mobileControlsGroup');
+             mobileControlsGroup.innerHTML = '';
 
-                    const label = document.createElement('label');
-                    label.htmlFor = `col-${col.id}`;
-                    label.textContent = col.name;
+             columns.forEach(col => {
+                 if (col.id !== 'sport') { // Skip sport grade - always visible
+                     // Desktop version
+                     const div = document.createElement('div');
+                     div.className = 'checkbox-item';
+                     
+                     const input = document.createElement('input');
+                     input.type = 'checkbox';
+                     input.id = `col-${col.id}`;
+                     input.checked = col.visible;
+                     input.dataset.column = col.id;
 
-                    div.appendChild(input);
-                    div.appendChild(label);
-                    controlsGroup.appendChild(div);
-                }
-            });
-        }
+                     const label = document.createElement('label');
+                     label.htmlFor = `col-${col.id}`;
+                     label.textContent = col.name;
 
-        function attachEventListeners() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', (e) => {
-                    const colId = e.target.dataset.column;
-                    const col = columns.find(c => c.id === colId);
-                    if (col) {
-                        col.visible = e.target.checked;
-                        localStorage.setItem(`col-${colId}`, col.visible);
-                        renderTable();
-                    }
-                });
-            });
+                     div.appendChild(input);
+                     div.appendChild(label);
+                     controlsGroup.appendChild(div);
 
-            // Font size button listeners
-            const decreaseBtn = document.getElementById('decreaseFontBtn');
-            const increaseBtn = document.getElementById('increaseFontBtn');
+                     // Mobile version
+                     const divMobile = document.createElement('div');
+                     divMobile.className = 'checkbox-item';
+                     
+                     const inputMobile = document.createElement('input');
+                     inputMobile.type = 'checkbox';
+                     inputMobile.id = `col-${col.id}-mobile`;
+                     inputMobile.checked = col.visible;
+                     inputMobile.dataset.column = col.id;
 
-            // Setup long-press functionality
-            setupLongPress(decreaseBtn, () => changeFontSize(-1));
-            setupLongPress(increaseBtn, () => changeFontSize(1));
-        }
+                     const labelMobile = document.createElement('label');
+                     labelMobile.htmlFor = `col-${col.id}-mobile`;
+                     labelMobile.textContent = col.name;
+
+                     divMobile.appendChild(inputMobile);
+                     divMobile.appendChild(labelMobile);
+                     mobileControlsGroup.appendChild(divMobile);
+                 }
+             });
+         }
+
+         function attachEventListeners() {
+             // Desktop checkboxes
+             document.querySelectorAll('#controlsGroup input[type="checkbox"]').forEach(checkbox => {
+                 checkbox.addEventListener('change', (e) => {
+                     const colId = e.target.dataset.column;
+                     const col = columns.find(c => c.id === colId);
+                     if (col) {
+                         col.visible = e.target.checked;
+                         localStorage.setItem(`col-${colId}`, col.visible);
+                         renderTable();
+                         // Sync mobile checkbox
+                         const mobileCheckbox = document.getElementById(`col-${colId}-mobile`);
+                         if (mobileCheckbox) mobileCheckbox.checked = col.visible;
+                     }
+                 });
+             });
+
+             // Mobile checkboxes
+             document.querySelectorAll('#mobileControlsGroup input[type="checkbox"]').forEach(checkbox => {
+                 checkbox.addEventListener('change', (e) => {
+                     const colId = e.target.dataset.column;
+                     const col = columns.find(c => c.id === colId);
+                     if (col) {
+                         col.visible = e.target.checked;
+                         localStorage.setItem(`col-${colId}`, col.visible);
+                         renderTable();
+                         // Sync desktop checkbox
+                         const desktopCheckbox = document.getElementById(`col-${colId}`);
+                         if (desktopCheckbox) desktopCheckbox.checked = col.visible;
+                     }
+                 });
+             });
+
+             // Desktop font size button listeners
+             const decreaseBtn = document.getElementById('decreaseFontBtn');
+             const increaseBtn = document.getElementById('increaseFontBtn');
+             setupLongPress(decreaseBtn, () => changeFontSize(-1));
+             setupLongPress(increaseBtn, () => changeFontSize(1));
+
+             // Mobile font size button listeners
+             const decreaseBtnMobile = document.getElementById('decreaseFontBtnMobile');
+             const increaseBtnMobile = document.getElementById('increaseFontBtnMobile');
+             setupLongPress(decreaseBtnMobile, () => changeFontSize(-1));
+             setupLongPress(increaseBtnMobile, () => changeFontSize(1));
+         }
+
+         function setupHamburgerMenu() {
+             const hamburgerBtn = document.getElementById('hamburgerBtn');
+             const mobileMenu = document.getElementById('mobileMenu');
+             const mobileMenuContent = document.getElementById('mobileMenuContent');
+             const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+             // Open menu
+             hamburgerBtn.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 mobileMenu.classList.add('open');
+             });
+
+             // Close menu button
+             mobileMenuClose.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 mobileMenu.classList.remove('open');
+             });
+
+             // Close menu when clicking outside
+             mobileMenu.addEventListener('click', (e) => {
+                 if (e.target === mobileMenu) {
+                     mobileMenu.classList.remove('open');
+                 }
+             });
+
+             // Close menu when clicking menu items (for mobile UX)
+             document.querySelectorAll('#mobileControlsGroup input[type="checkbox"]').forEach(checkbox => {
+                 checkbox.addEventListener('change', () => {
+                     // Don't auto-close, let user interact with multiple items
+                 });
+             });
+
+             // Close menu when clicking outside on desktop (for small screens)
+             document.addEventListener('click', (e) => {
+                 if (window.innerWidth <= 768 && 
+                     !mobileMenu.contains(e.target) && 
+                     !hamburgerBtn.contains(e.target) &&
+                     mobileMenu.classList.contains('open')) {
+                     mobileMenu.classList.remove('open');
+                 }
+             });
+         }
 
         function setupLongPress(button, callback) {
             let pressTimer;
@@ -556,17 +808,25 @@
         function setFontSize(size) {
             document.documentElement.style.setProperty('--font-size', size + 'px');
             document.getElementById('fontSizeValue').textContent = size + 'px';
+            document.getElementById('fontSizeValueMobile').textContent = size + 'px';
             updateButtonStates();
         }
 
         function updateButtonStates() {
             const fontSize = getComputedStyle(document.documentElement).getPropertyValue('--font-size').trim();
             const currentSize = parseInt(fontSize) || 14;
+            
+            // Desktop buttons
             const decreaseBtn = document.getElementById('decreaseFontBtn');
             const increaseBtn = document.getElementById('increaseFontBtn');
-            
             decreaseBtn.disabled = currentSize <= 12;
             increaseBtn.disabled = currentSize >= 24;
+
+            // Mobile buttons
+            const decreaseBtnMobile = document.getElementById('decreaseFontBtnMobile');
+            const increaseBtnMobile = document.getElementById('increaseFontBtnMobile');
+            decreaseBtnMobile.disabled = currentSize <= 12;
+            increaseBtnMobile.disabled = currentSize >= 24;
         }
 
         function loadPreferences() {

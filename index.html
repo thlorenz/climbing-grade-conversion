@@ -307,16 +307,16 @@
             right: 0;
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 99;
+            z-index: 999;
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
         }
 
         .mobile-menu.open {
-            display: flex;
-            opacity: 1;
-            pointer-events: auto;
+            display: flex !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
         }
 
         .mobile-menu-content {
@@ -726,7 +726,10 @@
                  e.preventDefault();
                  e.stopPropagation();
                  console.log('Hamburger clicked, opening menu');
+                 console.log('Before add:', mobileMenu.className);
                  mobileMenu.classList.add('open');
+                 console.log('After add:', mobileMenu.className);
+                 console.log('Menu visible?', window.getComputedStyle(mobileMenu).display);
              });
 
              // Close menu button

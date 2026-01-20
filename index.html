@@ -194,7 +194,7 @@
         .controls {
             padding: 20px;
             background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
@@ -358,6 +358,20 @@
                 font-size: 20px;
             }
 
+            .controls {
+                padding: 15px;
+            }
+
+            .controls h3 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .controls-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+
             .table-wrapper {
                 padding: 10px;
             }
@@ -392,24 +406,6 @@
             <p>Rockfax Single Grade Conversion 2021</p>
         </header>
 
-        <div class="table-wrapper">
-            <table id="gradesTable">
-                <thead>
-                    <tr>
-                        <th data-column="sport">Sport Grade</th>
-                        <th data-column="britTrad">British Trad</th>
-                        <th data-column="uiaa">UIAA</th>
-                        <th data-column="yds">YDS (USA)</th>
-                        <th data-column="norway">Norway</th>
-                        <th data-column="australia">Australia</th>
-                        <th data-column="category">Category</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
-
         <div class="controls">
             <div class="controls-row">
                 <div>
@@ -430,6 +426,24 @@
                     <span class="font-size-value" id="fontSizeValue">14px</span>
                 </div>
             </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="gradesTable">
+                <thead>
+                    <tr>
+                        <th data-column="sport">Sport Grade</th>
+                        <th data-column="britTrad">British Trad</th>
+                        <th data-column="uiaa">UIAA</th>
+                        <th data-column="yds">YDS (USA)</th>
+                        <th data-column="norway">Norway</th>
+                        <th data-column="australia">Australia</th>
+                        <th data-column="category">Category</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
         </div>
     </div>
 

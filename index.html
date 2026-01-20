@@ -565,14 +565,15 @@
                     const col = columns.find(c => c.id === colId);
                     if (col) {
                         col.visible = e.target.checked;
-                        localStorage.setItem(`col-${colId}`, col.visible);
+                        localStorage.setItem(`col-${colId}`, e.target.checked ? 'true' : 'false');
                         renderTable();
                     }
                 });
             });
         }
 
-        function loadPreferences() {
+        function loadSettings() {
+            // Load column visibility preferences
             columns.forEach(col => {
                 const saved = localStorage.getItem(`col-${col.id}`);
                 if (saved !== null) {
@@ -580,17 +581,22 @@
                 }
             });
 
-            // Load saved font size
-            const savedFontSize = localStorage.getItem('fontSize');
-            if (savedFontSize) {
-                setFontSize(parseInt(savedFontSize, 10));
-            }
-
-            // Load saved dark mode preference
+            // Load saved dark mode preference (must be before rendering to avoid flashing)
             const darkModePreference = localStorage.getItem('darkMode');
             if (darkModePreference === 'true') {
-                toggleDarkMode(true);
+                document.body.classList.add('dark-mode');
             }
+
+            // Load saved font size (must be before rendering)
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                document.documentElement.style.setProperty('--font-size', parseInt(savedFontSize, 10) + 'px');
+            }
+        }
+
+        function loadPreferences() {
+            // Legacy function name - redirects to loadSettings for backward compatibility
+            loadSettings();
         }
 
         function toggleDarkMode(enable) {
@@ -615,9 +621,40 @@
             localStorage.setItem('fontSize', size);
         }
 
-        // Load saved preferences and initialize
-        loadPreferences();
+        // Load saved settings early (before rendering)
+        loadSettings();
+        
+        // Initialize table and controls
         init();
+        
+        // Update UI controls to reflect loaded state
+        function syncUIState() {
+            // Sync checkbox states with column visibility
+            columns.forEach(col => {
+                const checkbox = document.getElementById(`col-${col.id}`);
+                if (checkbox) {
+                    checkbox.checked = col.visible;
+                }
+            });
+
+            // Sync dark mode button state
+            const darkModeButton = document.getElementById('darkModeButton');
+            if (document.body.classList.contains('dark-mode')) {
+                darkModeButton.classList.add('active');
+            } else {
+                darkModeButton.classList.remove('active');
+            }
+
+            // Sync font size slider and display
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                const size = parseInt(savedFontSize, 10);
+                document.getElementById('fontSizeSlider').value = size;
+                document.getElementById('fontSizeValue').textContent = size + 'px';
+            }
+        }
+        
+        syncUIState();
 
         // Attach dark mode toggle listener
         document.getElementById('darkModeButton').addEventListener('click', (e) => {

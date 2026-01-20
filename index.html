@@ -729,7 +729,11 @@
                  console.log('Hamburger clicked, opening menu');
                  mobileMenu.classList.add('open');
                  const content = document.getElementById('mobileMenuContent');
+                 console.log('Before transform:', content.style.transform);
+                 // Force reflow to trigger transition
+                 content.offsetHeight;
                  content.style.transform = 'translateX(0)';
+                 console.log('After transform:', content.style.transform);
              });
 
              // Close menu button

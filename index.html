@@ -728,11 +728,7 @@
                  console.log('Hamburger clicked, opening menu');
                  mobileMenu.classList.add('open');
                  const content = document.getElementById('mobileMenuContent');
-                 console.log('Menu display:', window.getComputedStyle(mobileMenu).display);
-                 console.log('Content transform:', window.getComputedStyle(content).transform);
-                 setTimeout(() => {
-                     console.log('After transition - Content transform:', window.getComputedStyle(content).transform);
-                 }, 350);
+                 content.style.transform = 'translateX(0)';
              });
 
              // Close menu button
@@ -740,6 +736,8 @@
                  e.preventDefault();
                  e.stopPropagation();
                  console.log('Close button clicked, closing menu');
+                 const content = document.getElementById('mobileMenuContent');
+                 content.style.transform = 'translateX(-100%)';
                  mobileMenu.classList.remove('open');
              });
 

@@ -297,12 +297,12 @@
         // Column configuration
         const columns = [
             { id: 'sport', name: 'Sport Grade', visible: true },
-            { id: 'britTrad', name: 'British Trad', visible: true },
+            { id: 'britTrad', name: 'British Trad', visible: false },
             { id: 'uiaa', name: 'UIAA', visible: true },
             { id: 'yds', name: 'YDS', visible: true },
             { id: 'norway', name: 'Norway', visible: true },
             { id: 'australia', name: 'Australia', visible: true },
-            { id: 'category', name: 'Category', visible: true }
+            { id: 'category', name: 'Category', visible: false }
         ];
 
         // Initialize
@@ -322,7 +322,7 @@
                 row.className = `grade-${categoryLower}`;
 
                 columns.forEach(col => {
-                    if (col.visible || col.id === 'sport') { // Always show sport grade
+                    if (col.visible) {
                         const td = document.createElement('td');
                         if (col.id === 'category') {
                             td.innerHTML = `<span class="category-badge badge-${categoryLower}">${grade.category}</span>`;
@@ -358,7 +358,7 @@
             controlsGroup.innerHTML = '';
 
             columns.forEach(col => {
-                if (col.id !== 'sport' && col.id !== 'category') { // Skip sport and category
+                if (col.id !== 'sport') { // Skip sport grade - always visible
                     const div = document.createElement('div');
                     div.className = 'checkbox-item';
                     

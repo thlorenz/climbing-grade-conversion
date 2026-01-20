@@ -56,10 +56,14 @@
             padding: 20px;
         }
 
+        :root {
+            --font-size: 14px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: var(--font-size);
         }
 
         th {
@@ -176,6 +180,45 @@
             color: #555;
         }
 
+        .font-size-control {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #d0d0d0;
+        }
+
+        .font-size-control label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .font-size-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .font-size-input-group input[type="range"] {
+            flex: 1;
+            height: 40px;
+            cursor: pointer;
+            accent-color: #667eea;
+            -webkit-appearance: slider-horizontal;
+        }
+
+        .font-size-value {
+            min-width: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-align: center;
+            padding: 8px 12px;
+            background-color: #f0f4ff;
+            border-radius: 6px;
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 24px;
@@ -219,6 +262,19 @@
             table {
                 font-size: 11px;
             }
+
+            .font-size-input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .font-size-input-group input[type="range"] {
+                width: 100%;
+            }
+
+            .font-size-value {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -250,6 +306,14 @@
         <div class="controls">
             <h3>Show/Hide Grading Systems</h3>
             <div class="checkbox-group" id="controlsGroup">
+            </div>
+            
+            <div class="font-size-control">
+                <label for="fontSizeSlider">Font Size</label>
+                <div class="font-size-input-group">
+                    <input type="range" id="fontSizeSlider" min="12" max="24" value="14" step="1">
+                    <span class="font-size-value" id="fontSizeValue">14px</span>
+                </div>
             </div>
         </div>
     </div>
@@ -400,11 +464,29 @@
                     col.visible = saved === 'true';
                 }
             });
+
+            // Load saved font size
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                setFontSize(parseInt(savedFontSize, 10));
+            }
+        }
+
+        function setFontSize(size) {
+            document.documentElement.style.setProperty('--font-size', size + 'px');
+            document.getElementById('fontSizeSlider').value = size;
+            document.getElementById('fontSizeValue').textContent = size + 'px';
+            localStorage.setItem('fontSize', size);
         }
 
         // Load saved preferences and initialize
         loadPreferences();
         init();
+
+        // Attach font size slider listener
+        document.getElementById('fontSizeSlider').addEventListener('input', (e) => {
+            setFontSize(parseInt(e.target.value, 10));
+        });
     </script>
 
     <script>

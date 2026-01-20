@@ -867,7 +867,7 @@
         }
 
         function changeFontSize(delta) {
-            const currentSize = parseInt(localStorage.getItem('fontSize')) ?? 14;
+            const currentSize = localStorage.getItem('fontSize') ? parseInt(localStorage.getItem('fontSize')) : 14;
             const newSize = Math.max(12, Math.min(24, currentSize + delta));
 
             if (newSize !== currentSize) {
@@ -927,7 +927,7 @@
             });
 
             // Load font size
-            const savedFontSize = parseInt(localStorage.getItem('fontSize')) ?? 14;
+            const savedFontSize = localStorage.getItem('fontSize') ? parseInt(localStorage.getItem('fontSize')) : 14;
             setFontSize(savedFontSize);
 
             // Load dark mode preference

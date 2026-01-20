@@ -69,7 +69,7 @@
         th {
             background-color: #f8f9fa;
             padding: 12px;
-            text-align: left;
+            text-align: center;
             font-weight: 600;
             border-bottom: 2px solid #667eea;
             color: #333;
@@ -78,10 +78,19 @@
             z-index: 10;
         }
 
+        th[data-column="sport"] {
+            text-align: left;
+        }
+
         td {
             padding: 12px;
             border-bottom: 1px solid #e0e0e0;
             color: #555;
+            text-align: center;
+        }
+
+        td[data-column="sport"] {
+            text-align: left;
         }
 
         tr:hover {
@@ -548,6 +557,7 @@
                  columns.forEach(col => {
                      if (col.visible) {
                          const td = document.createElement('td');
+                         td.dataset.column = col.id;
                          if (col.id === 'category') {
                              td.innerHTML = `<span class="category-badge badge-${categoryLower}">${grade.category}</span>`;
                          } else {
@@ -568,7 +578,7 @@
              headers.forEach(th => {
                  const colId = th.dataset.column;
                  const col = columns.find(c => c.id === colId);
-                 
+
                  if (colId === 'sport') {
                      th.style.display = '';
                  } else if (col) {
@@ -591,7 +601,7 @@
                      // Desktop version
                      const div = document.createElement('div');
                      div.className = 'checkbox-item';
-                     
+
                      const input = document.createElement('input');
                      input.type = 'checkbox';
                      input.id = `col-${col.id}`;
@@ -609,7 +619,7 @@
                      // Mobile version
                      const divMobile = document.createElement('div');
                      divMobile.className = 'checkbox-item';
-                     
+
                      const inputMobile = document.createElement('input');
                      inputMobile.type = 'checkbox';
                      inputMobile.id = `col-${col.id}-mobile`;
@@ -707,8 +717,8 @@
 
              // Close menu when clicking outside
              document.addEventListener('click', (e) => {
-                 if (window.innerWidth <= 768 && 
-                     !mobileMenu.contains(e.target) && 
+                 if (window.innerWidth <= 768 &&
+                     !mobileMenu.contains(e.target) &&
                      !hamburgerBtn.contains(e.target) &&
                      mobileMenu.classList.contains('open')) {
                      console.log('Clicked outside, closing menu');
@@ -720,7 +730,7 @@
         function setupLongPress(button, callback) {
             let pressTimer;
             let isPressed = false;
-            
+
             function startPress() {
                 isPressed = true;
                 callback();
@@ -758,9 +768,9 @@
         }
 
         function changeFontSize(delta) {
-            const currentSize = parseInt(localStorage.getItem('fontSize')) || 14;
+            const currentSize = parseInt(localStorage.getItem('fontSize')) ?? 14;
             const newSize = Math.max(12, Math.min(24, currentSize + delta));
-            
+
             if (newSize !== currentSize) {
                 localStorage.setItem('fontSize', newSize);
                 setFontSize(newSize);
@@ -778,8 +788,8 @@
 
         function updateButtonStates() {
             const fontSize = getComputedStyle(document.documentElement).getPropertyValue('--font-size').trim();
-            const currentSize = parseInt(fontSize) || 14;
-            
+            const currentSize = parseInt(fontSize) ?? 14;
+
             // Desktop buttons
             const decreaseBtn = document.getElementById('decreaseFontBtn');
             const increaseBtn = document.getElementById('increaseFontBtn');
@@ -802,7 +812,7 @@
             });
 
             // Load font size
-            const savedFontSize = parseInt(localStorage.getItem('fontSize')) || 14;
+            const savedFontSize = parseInt(localStorage.getItem('fontSize')) ?? 14;
             setFontSize(savedFontSize);
         }
 

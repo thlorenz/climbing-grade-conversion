@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climbing Grade Conversion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #667eea;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .grade-beginner {
+            background-color: #e8f5e9;
+        }
+
+        .grade-experienced {
+            background-color: #fff3e0;
+        }
+
+        .grade-advanced {
+            background-color: #ffebee;
+        }
+
+        .grade-expert {
+            background-color: #f3e5f5;
+        }
+
+        .grade-elite {
+            background-color: #eceff1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-beginner {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .badge-experienced {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .badge-advanced {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .badge-expert {
+            background-color: #673ab7;
+            color: white;
+        }
+
+        .badge-elite {
+            background-color: #263238;
+            color: white;
+        }
+
+        .controls {
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .controls h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 24px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .checkbox-group {
+                gap: 15px;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .table-wrapper {
+                padding: 10px;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+
+            table {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧗 Climbing Grade Conversion Chart</h1>
+            <p>Rockfax Single Grade Conversion 2021</p>
+        </header>
+
+        <div class="table-wrapper">
+            <table id="gradesTable">
+                <thead>
+                    <tr>
+                        <th data-column="sport">Sport Grade</th>
+                        <th data-column="britTrad">British Trad</th>
+                        <th data-column="uiaa">UIAA</th>
+                        <th data-column="yds">YDS (USA)</th>
+                        <th data-column="norway">Norway</th>
+                        <th data-column="australia">Australia</th>
+                        <th data-column="category">Category</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="controls">
+            <h3>Show/Hide Grading Systems</h3>
+            <div class="checkbox-group" id="controlsGroup">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Climbing grades data
+        const gradesData = [
+            { sport: '1', britTrad: 'Mod', uiaa: 'I', yds: '5.1', norway: '-', australia: '4', category: 'Beginner' },
+            { sport: '2', britTrad: '-', uiaa: 'II', yds: '5.2', norway: '3', australia: '6', category: 'Beginner' },
+            { sport: '2+', britTrad: 'Diff', uiaa: 'III', yds: '5.3', norway: '4', australia: '8', category: 'Beginner' },
+            { sport: '3a', britTrad: 'VDiff', uiaa: 'III+', yds: '5.4', norway: '-', australia: '10', category: 'Beginner' },
+            { sport: '3b', britTrad: '-', uiaa: 'IV-', yds: '5.5', norway: '4+', australia: '-', category: 'Beginner' },
+            { sport: '3c', britTrad: 'Sev/HVD', uiaa: 'IV', yds: '-', norway: '-', australia: '12', category: 'Beginner' },
+            { sport: '4a', britTrad: '-', uiaa: 'IV+', yds: '5.6', norway: '5-', australia: '-', category: 'Beginner' },
+            { sport: '4b', britTrad: 'HS', uiaa: 'V-', yds: '5.7', norway: '5', australia: '14', category: 'Experienced' },
+            { sport: '4c', britTrad: 'VS', uiaa: 'V', yds: '5.8', norway: '-', australia: '15', category: 'Experienced' },
+            { sport: '5a', britTrad: '-', uiaa: 'V+', yds: '-', norway: '5+', australia: '16', category: 'Experienced' },
+            { sport: '5b', britTrad: 'HVS', uiaa: 'VI-', yds: '5.9', norway: '-', australia: '17', category: 'Experienced' },
+            { sport: '5c', britTrad: 'E1', uiaa: 'VI', yds: '5.10a', norway: '6-', australia: '18', category: 'Experienced' },
+            { sport: '6a', britTrad: '-', uiaa: 'VI+', yds: '5.10b', norway: '6', australia: '19', category: 'Experienced' },
+            { sport: '6a+', britTrad: 'E2', uiaa: 'VII-', yds: '-', norway: '-', australia: '20', category: 'Advanced' },
+            { sport: '6b', britTrad: '-', uiaa: '-', yds: '5.10c', norway: '6+', australia: '21', category: 'Advanced' },
+            { sport: '6b+', britTrad: 'E3', uiaa: 'VII', yds: '5.10d', norway: '-', australia: '-', category: 'Advanced' },
+            { sport: '6c', britTrad: '-', uiaa: 'VII+', yds: '5.11a', norway: '7-', australia: '22', category: 'Advanced' },
+            { sport: '6c+', britTrad: 'E4', uiaa: 'VIII-', yds: '5.11b', norway: '-', australia: '23', category: 'Advanced' },
+            { sport: '-', britTrad: '-', uiaa: '-', yds: '5.11c', norway: '7', australia: '24', category: 'Advanced' },
+            { sport: '7a', britTrad: 'E5', uiaa: 'VIII', yds: '5.11d', norway: '7+', australia: '25', category: 'Advanced' },
+            { sport: '7a+', britTrad: '-', uiaa: '-', yds: '5.12a', norway: '-', australia: '-', category: 'Advanced' },
+            { sport: '7b', britTrad: 'E6', uiaa: 'VIII+', yds: '5.12b', norway: '8-', australia: '26', category: 'Expert' },
+            { sport: '7b+', britTrad: '-', uiaa: 'IX-', yds: '5.12c', norway: '8', australia: '27', category: 'Expert' },
+            { sport: '7c', britTrad: 'E7', uiaa: 'IX', yds: '5.12d', norway: '-', australia: '28', category: 'Expert' },
+            { sport: '7c+', britTrad: '-', uiaa: 'IX+', yds: '5.13a', norway: '8+', australia: '29', category: 'Expert' },
+            { sport: '8a', britTrad: 'E8', uiaa: 'X-', yds: '5.13b', norway: '9-', australia: '30', category: 'Elite' },
+            { sport: '8a+', britTrad: '-', uiaa: '-', yds: '5.13c', norway: '-', australia: '31', category: 'Elite' },
+            { sport: '8b', britTrad: 'E9', uiaa: 'X', yds: '5.13d', norway: '9', australia: '32', category: 'Elite' },
+            { sport: '8b+', britTrad: '-', uiaa: 'X+', yds: '5.14a', norway: '9+', australia: '33', category: 'Elite' },
+            { sport: '8c', britTrad: 'E10', uiaa: 'XI-', yds: '5.14b', norway: '-', australia: '34', category: 'Elite' },
+            { sport: '8c+', britTrad: '-', uiaa: 'XI', yds: '5.14c', norway: '10-', australia: '-', category: 'Elite' },
+            { sport: '9a', britTrad: 'E11', uiaa: 'XI+', yds: '5.14d', norway: '10', australia: '35', category: 'Elite' },
+            { sport: '9a+', britTrad: '-', uiaa: '-', yds: '5.15a', norway: '-', australia: '36', category: 'Elite' },
+            { sport: '9b', britTrad: '-', uiaa: 'XII-', yds: '5.15b', norway: '10+', australia: '37', category: 'Elite' },
+            { sport: '9b+', britTrad: '-', uiaa: 'XII', yds: '5.15c', norway: '11-', australia: '38', category: 'Elite' }
+        ];
+
+        // Column configuration
+        const columns = [
+            { id: 'sport', name: 'Sport Grade', visible: true },
+            { id: 'britTrad', name: 'British Trad', visible: true },
+            { id: 'uiaa', name: 'UIAA', visible: true },
+            { id: 'yds', name: 'YDS', visible: true },
+            { id: 'norway', name: 'Norway', visible: true },
+            { id: 'australia', name: 'Australia', visible: true },
+            { id: 'category', name: 'Category', visible: true }
+        ];
+
+        // Initialize
+        function init() {
+            renderTable();
+            renderControls();
+            attachEventListeners();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            gradesData.forEach(grade => {
+                const row = document.createElement('tr');
+                const categoryLower = grade.category.toLowerCase();
+                row.className = `grade-${categoryLower}`;
+
+                columns.forEach(col => {
+                    if (col.visible || col.id === 'sport') { // Always show sport grade
+                        const td = document.createElement('td');
+                        if (col.id === 'category') {
+                            td.innerHTML = `<span class="category-badge badge-${categoryLower}">${grade.category}</span>`;
+                        } else {
+                            td.textContent = grade[col.id];
+                        }
+                        row.appendChild(td);
+                    }
+                });
+
+                tbody.appendChild(row);
+            });
+
+            updateTableHeaders();
+        }
+
+        function updateTableHeaders() {
+            const headers = document.querySelectorAll('th');
+            headers.forEach(th => {
+                const colId = th.dataset.column;
+                const col = columns.find(c => c.id === colId);
+                
+                if (colId === 'sport') {
+                    th.style.display = '';
+                } else if (col) {
+                    th.style.display = col.visible ? '' : 'none';
+                }
+            });
+        }
+
+        function renderControls() {
+            const controlsGroup = document.getElementById('controlsGroup');
+            controlsGroup.innerHTML = '';
+
+            columns.forEach(col => {
+                if (col.id !== 'sport' && col.id !== 'category') { // Skip sport and category
+                    const div = document.createElement('div');
+                    div.className = 'checkbox-item';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = `col-${col.id}`;
+                    input.checked = col.visible;
+                    input.dataset.column = col.id;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `col-${col.id}`;
+                    label.textContent = col.name;
+
+                    div.appendChild(input);
+                    div.appendChild(label);
+                    controlsGroup.appendChild(div);
+                }
+            });
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const colId = e.target.dataset.column;
+                    const col = columns.find(c => c.id === colId);
+                    if (col) {
+                        col.visible = e.target.checked;
+                        localStorage.setItem(`col-${colId}`, col.visible);
+                        renderTable();
+                    }
+                });
+            });
+        }
+
+        function loadPreferences() {
+            columns.forEach(col => {
+                const saved = localStorage.getItem(`col-${col.id}`);
+                if (saved !== null) {
+                    col.visible = saved === 'true';
+                }
+            });
+        }
+
+        // Load saved preferences and initialize
+        loadPreferences();
+        init();
+    </script>
+</body>
+</html>
